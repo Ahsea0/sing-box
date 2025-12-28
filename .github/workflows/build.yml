@@ -43,6 +43,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
+        
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -572,6 +573,12 @@ jobs:
         with:
           fetch-depth: 0
           submodules: 'recursive'
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/local/lib/android # This is usually 10GB+
+          sudo rm -rf /usr/share/dotnet      # This is about 5GB
+          sudo rm -rf /opt/ghc               # This is about 2GB
+          df -h                              # Check how much room we have now
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -625,7 +632,7 @@ jobs:
           mkdir clients/android/app/libs
           cp *.aar clients/android/app/libs
           cd clients/android
-          ./gradlew :app:assembleOtherRelease :app:assembleOtherLegacyRelease
+          ./gradlew :app:assembleOtherDebug :app:assembleOtherLegacyDebug
         env:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
@@ -634,8 +641,8 @@ jobs:
         run: |-
           mkdir -p dist
           #cp clients/android/app/build/outputs/apk/play/release/*.apk dist
-          cp clients/android/app/build/outputs/apk/other/release/*.apk dist
-          cp clients/android/app/build/outputs/apk/otherLegacy/release/*.apk dist
+          cp clients/android/app/build/outputs/apk/other/debug/*.apk dist
+          cp clients/android/app/build/outputs/apk/otherLegacy/debug/*.apk dist
           VERSION_CODE=$(grep VERSION_CODE clients/android/version.properties | cut -d= -f2)
           VERSION_NAME=$(grep VERSION_NAME clients/android/version.properties | cut -d= -f2)
           cat > dist/SFA-version-metadata.json << EOF
