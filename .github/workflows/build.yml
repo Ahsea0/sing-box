@@ -575,9 +575,10 @@ jobs:
           submodules: 'recursive'
       - name: Free Disk Space
         run: |
-          sudo rm -rf /usr/local/lib/android # This is usually 10GB+
-          sudo rm -rf /usr/share/dotnet      # This is about 5GB
-          sudo rm -rf /opt/ghc               # This is about 2GB
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo apt-get clean
           df -h                              # Check how much room we have now
       - name: Setup Go
         uses: actions/setup-go@v5
